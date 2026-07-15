@@ -33,14 +33,14 @@ async function apiRequest(path, options = {}) {
 
 const api = {
   // Tickets
-  getTickets: ()        => apiRequest('/tickets'),
+  getTickets: () => apiRequest('/tickets'),
   getTicketsFiltered: (qs) => apiRequest(`/tickets?${qs}`),
-  getTicket: (id)       => apiRequest(`/tickets/${id}`),
-  getTicketStats: ()    => apiRequest('/tickets/stats'),
+  getTicket: (id) => apiRequest(`/tickets/${id}`),
+  getTicketStats: () => apiRequest('/tickets/stats'),
   searchTickets: (keyword) => apiRequest(`/tickets/search?keyword=${encodeURIComponent(keyword)}`),
-  createTicket: (data)  => apiRequest('/tickets', { method: 'POST', body: JSON.stringify(data) }),
+  createTicket: (data) => apiRequest('/tickets', { method: 'POST', body: JSON.stringify(data) }),
   updateTicket: (id, data) => apiRequest(`/tickets/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-  deleteTicket: (id)    => apiRequest(`/tickets/${id}`, { method: 'DELETE' }),
+  deleteTicket: (id) => apiRequest(`/tickets/${id}`, { method: 'DELETE' }),
 
   // Customers
   getCustomers: () => apiRequest('/customers'),

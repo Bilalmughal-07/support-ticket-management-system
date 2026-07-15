@@ -6,15 +6,15 @@
 // ── Badge helpers ────────────────────────────────────────────────────────────
 
 const STATUS_CLS = {
-  'Open':        'badge--open',
+  'Open': 'badge--open',
   'In Progress': 'badge--progress',
-  'Closed':      'badge--closed',
+  'Closed': 'badge--closed',
 };
 const PRIORITY_CLS = {
   'Critical': 'badge--critical',
-  'High':     'badge--high',
-  'Medium':   'badge--medium',
-  'Low':      'badge--low',
+  'High': 'badge--high',
+  'Medium': 'badge--medium',
+  'Low': 'badge--low',
 };
 
 function statusBadge(status) {
@@ -29,8 +29,8 @@ function priorityBadge(priority) {
 // ── State ────────────────────────────────────────────────────────────────────
 
 const state = {
-  keyword:  '',
-  status:   '',
+  keyword: '',
+  status: '',
   priority: '',
   editingId: null,   // null = create mode, number = edit mode
   viewingId: null,
@@ -38,31 +38,31 @@ const state = {
 
 // ── DOM refs ─────────────────────────────────────────────────────────────────
 
-const tbody          = document.getElementById('ticketsBody');
-const ticketCount    = document.getElementById('ticketCount');
-const searchInput    = document.getElementById('searchInput');
-const filterStatus   = document.getElementById('filterStatus');
+const tbody = document.getElementById('ticketsBody');
+const ticketCount = document.getElementById('ticketCount');
+const searchInput = document.getElementById('searchInput');
+const filterStatus = document.getElementById('filterStatus');
 const filterPriority = document.getElementById('filterPriority');
-const btnClear       = document.getElementById('btnClearFilters');
-const btnNewTicket   = document.getElementById('btnNewTicket');
+const btnClear = document.getElementById('btnClearFilters');
+const btnNewTicket = document.getElementById('btnNewTicket');
 
 // Ticket modal
-const ticketOverlay  = document.getElementById('ticketModalOverlay');
-const ticketTitle    = document.getElementById('ticketModalTitle');
-const ticketSaveBtn  = document.getElementById('ticketModalSave');
-const fldCustomer    = document.getElementById('ticketCustomer');
-const fldSubject     = document.getElementById('ticketSubject');
-const fldDesc        = document.getElementById('ticketDesc');
-const fldPriority    = document.getElementById('ticketPriority');
-const fldStatus      = document.getElementById('ticketStatus');
-const rowCustomer    = document.getElementById('rowCustomer');
-const rowSubject     = document.getElementById('rowSubject');
+const ticketOverlay = document.getElementById('ticketModalOverlay');
+const ticketTitle = document.getElementById('ticketModalTitle');
+const ticketSaveBtn = document.getElementById('ticketModalSave');
+const fldCustomer = document.getElementById('ticketCustomer');
+const fldSubject = document.getElementById('ticketSubject');
+const fldDesc = document.getElementById('ticketDesc');
+const fldPriority = document.getElementById('ticketPriority');
+const fldStatus = document.getElementById('ticketStatus');
+const rowCustomer = document.getElementById('rowCustomer');
+const rowSubject = document.getElementById('rowSubject');
 
 // View modal
-const viewOverlay    = document.getElementById('viewModalOverlay');
-const viewTitle      = document.getElementById('viewModalTitle');
-const viewBody       = document.getElementById('viewModalBody');
-const viewEditBtn    = document.getElementById('viewModalEdit');
+const viewOverlay = document.getElementById('viewModalOverlay');
+const viewTitle = document.getElementById('viewModalTitle');
+const viewBody = document.getElementById('viewModalBody');
+const viewEditBtn = document.getElementById('viewModalEdit');
 
 // ── Load & render tickets ────────────────────────────────────────────────────
 
@@ -78,7 +78,7 @@ async function loadTickets() {
     } else {
       // Build query string for status + priority filters
       const params = new URLSearchParams();
-      if (state.status)   params.set('status',   state.status);
+      if (state.status) params.set('status', state.status);
       if (state.priority) params.set('priority', state.priority);
       const qs = params.toString();
       tickets = await (qs
@@ -167,10 +167,10 @@ function openCreateModal() {
   ticketTitle.textContent = 'New Ticket';
   ticketSaveBtn.textContent = 'Create Ticket';
   clearValidation();
-  fldSubject.value    = '';
-  fldDesc.value       = '';
-  fldPriority.value   = 'Medium';
-  fldStatus.value     = 'Open';
+  fldSubject.value = '';
+  fldDesc.value = '';
+  fldPriority.value = 'Medium';
+  fldStatus.value = 'Open';
   populateCustomerDropdown();
   ticketOverlay.classList.add('is-open');
   fldSubject.focus();
@@ -184,8 +184,8 @@ async function openEditModal(id) {
 
   // Load ticket data and customer list in parallel
   ticketOverlay.classList.add('is-open');
-  fldSubject.value  = '';
-  fldDesc.value     = '';
+  fldSubject.value = '';
+  fldDesc.value = '';
   fldCustomer.innerHTML = '<option>Loading…</option>';
 
   try {
@@ -193,11 +193,11 @@ async function openEditModal(id) {
       api.getTicket(id),
       populateCustomerDropdown(),
     ]);
-    fldCustomer.value  = ticket.customer_id;
-    fldSubject.value   = ticket.subject;
-    fldDesc.value      = ticket.description || '';
-    fldPriority.value  = ticket.priority;
-    fldStatus.value    = ticket.status;
+    fldCustomer.value = ticket.customer_id;
+    fldSubject.value = ticket.subject;
+    fldDesc.value = ticket.description || '';
+    fldPriority.value = ticket.priority;
+    fldStatus.value = ticket.status;
     fldSubject.focus();
   } catch (err) {
     showToast(`Could not load ticket: ${err.message}`, 'error');
@@ -216,11 +216,11 @@ async function saveTicket() {
   if (!validateForm()) return;
 
   const data = {
-    customer_id:  parseInt(fldCustomer.value, 10),
-    subject:      fldSubject.value.trim(),
-    description:  fldDesc.value.trim(),
-    priority:     fldPriority.value,
-    status:       fldStatus.value,
+    customer_id: parseInt(fldCustomer.value, 10),
+    subject: fldSubject.value.trim(),
+    description: fldDesc.value.trim(),
+    priority: fldPriority.value,
+    status: fldStatus.value,
   };
 
   ticketSaveBtn.disabled = true;
@@ -319,9 +319,9 @@ searchInput.addEventListener('input', () => {
     state.keyword = searchInput.value;
     // Clear status/priority filters when searching by keyword
     if (state.keyword.trim()) {
-      filterStatus.value   = '';
+      filterStatus.value = '';
       filterPriority.value = '';
-      state.status   = '';
+      state.status = '';
       state.priority = '';
     }
     loadTickets();
@@ -331,7 +331,7 @@ searchInput.addEventListener('input', () => {
 // ── Filters ───────────────────────────────────────────────────────────────────
 
 filterStatus.addEventListener('change', () => {
-  state.status  = filterStatus.value;
+  state.status = filterStatus.value;
   state.keyword = '';
   searchInput.value = '';
   loadTickets();
@@ -339,17 +339,17 @@ filterStatus.addEventListener('change', () => {
 
 filterPriority.addEventListener('change', () => {
   state.priority = filterPriority.value;
-  state.keyword  = '';
+  state.keyword = '';
   searchInput.value = '';
   loadTickets();
 });
 
 btnClear.addEventListener('click', () => {
-  state.keyword  = '';
-  state.status   = '';
+  state.keyword = '';
+  state.status = '';
   state.priority = '';
-  searchInput.value    = '';
-  filterStatus.value   = '';
+  searchInput.value = '';
+  filterStatus.value = '';
   filterPriority.value = '';
   loadTickets();
 });
@@ -360,11 +360,11 @@ btnNewTicket.addEventListener('click', openCreateModal);
 
 // ── Modal close/cancel ────────────────────────────────────────────────────────
 
-document.getElementById('ticketModalClose').addEventListener('click',  closeTicketModal);
+document.getElementById('ticketModalClose').addEventListener('click', closeTicketModal);
 document.getElementById('ticketModalCancel').addEventListener('click', closeTicketModal);
 ticketOverlay.addEventListener('click', (e) => { if (e.target === ticketOverlay) closeTicketModal(); });
 
-document.getElementById('viewModalClose').addEventListener('click',  closeViewModal);
+document.getElementById('viewModalClose').addEventListener('click', closeViewModal);
 document.getElementById('viewModalClose2').addEventListener('click', closeViewModal);
 viewOverlay.addEventListener('click', (e) => { if (e.target === viewOverlay) closeViewModal(); });
 
@@ -383,12 +383,12 @@ viewEditBtn.addEventListener('click', () => {
 tbody.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-action]');
   if (!btn) return;
-  const id      = parseInt(btn.dataset.id, 10);
-  const action  = btn.dataset.action;
+  const id = parseInt(btn.dataset.id, 10);
+  const action = btn.dataset.action;
   const subject = btn.dataset.subject || '';
 
-  if (action === 'view')   openViewModal(id);
-  if (action === 'edit')   openEditModal(id);
+  if (action === 'view') openViewModal(id);
+  if (action === 'edit') openEditModal(id);
   if (action === 'delete') deleteTicket(id, subject);
 });
 
@@ -397,7 +397,7 @@ tbody.addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if (ticketOverlay.classList.contains('is-open')) closeTicketModal();
-    if (viewOverlay.classList.contains('is-open'))   closeViewModal();
+    if (viewOverlay.classList.contains('is-open')) closeViewModal();
   }
 });
 

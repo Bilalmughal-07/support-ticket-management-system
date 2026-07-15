@@ -28,7 +28,7 @@ const createTicket = (customer_id, subject, description, priority, status, callb
         `INSERT INTO tickets (customer_id, subject, description, priority, status) 
          VALUES (?, ?, ?, ?, ?)`,
         [customer_id, subject, description, priority, status],
-        function(err) {
+        function (err) {
             callback(err, this?.lastID);
         }
     );
@@ -42,7 +42,7 @@ const updateTicket = (id, customer_id, subject, description, priority, status, c
              updated_at = CURRENT_TIMESTAMP 
          WHERE id = ?`,
         [customer_id, subject, description, priority, status, id],
-        function(err) {
+        function (err) {
             callback(err, this?.changes);
         }
     );
@@ -50,7 +50,7 @@ const updateTicket = (id, customer_id, subject, description, priority, status, c
 
 // Delete ticket
 const deleteTicket = (id, callback) => {
-    db.run('DELETE FROM tickets WHERE id = ?', [id], function(err) {
+    db.run('DELETE FROM tickets WHERE id = ?', [id], function (err) {
         callback(err, this?.changes);
     });
 };
