@@ -282,7 +282,7 @@ feat: implement search and dashboard stats endpoints
 | Backend / API Engineer | Abdul Azeem Hashmi | [@AbdulAzeemHashmi](https://github.com/AbdulAzeemHashmi) |
 | Database Engineer | Abdul Azeem Hashmi | [@AbdulAzeemHashmi](https://github.com/AbdulAzeemHashmi) |
 | Frontend Engineer | Emaan Ahmed | [@emaanahmed5](https://github.com/emaanahmed5) |
-| QA / Documentation | Abdul Rafih Khan | - |
+| QA / Documentation | Abdul Rafih Khan | [@RafihKhan-47](https://github.com/RafihKhan-47) |
 
 ---
 
