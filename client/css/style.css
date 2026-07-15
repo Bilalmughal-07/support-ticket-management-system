@@ -479,6 +479,163 @@ table.data tbody tr:hover { background: var(--paper); }
   border-top: 1px solid var(--line);
 }
 
+/* ---------- Result count line ---------- */
+/*
+   Shown above the data table: "12 tickets", "3 customers".
+   Keeps the user oriented after filtering / searching.
+*/
+.result-count {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin: 0 0 10px;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- Link-style button (no visible button chrome) ---------- */
+/*
+   Used for clickable ticket subjects in the table — looks like a
+   regular text link but is semantically a <button> so keyboard
+   users can reach it with Tab.
+*/
+.link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  font-size: inherit;
+  color: var(--brand);
+  cursor: pointer;
+  text-align: left;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.link-btn:hover { color: var(--brand-dark); text-decoration: underline; }
+.link-btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 3px; }
+
+/* ---------- Critical priority badge ---------- */
+/*
+   Extends the existing badge system with a "Critical" tier that
+   sits above "High" — uses a deep crimson to signal urgency.
+*/
+.badge--critical {
+  background: #FDE8E8;
+  color: #991B1B;
+  font-weight: 700;
+}
+.badge--critical::before { background: #991B1B; }
+
+/* ---------- Wide modal variant ---------- */
+/*
+   Used for detail / read-only views where a single-column
+   440 px modal feels cramped.  Still respects the 90 vh cap.
+*/
+.modal--wide {
+  max-width: 580px;
+}
+
+/* ---------- Detail grid (ticket & customer view modals) ---------- */
+/*
+   Two-column key → value layout inside detail modals.
+   Labels sit in the left column (fixed width), values fill the right.
+   A "full-width" modifier spans both columns for the description block.
+*/
+.detail-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.detail-row {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  align-items: baseline;
+  gap: 8px 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.detail-row:last-child { border-bottom: none; }
+
+/* Full-width row (used for long description text) */
+.detail-row--full {
+  grid-template-columns: 1fr;
+}
+.detail-row--full .detail-label { margin-bottom: 6px; }
+
+.detail-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.detail-value {
+  font-size: 13.5px;
+  color: var(--text);
+  font-weight: 500;
+  /* allow badges to sit inline */
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.detail-desc {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--text);
+  line-height: 1.65;
+  white-space: pre-wrap;   /* preserve intentional line breaks */
+  word-break: break-word;
+  background: var(--paper);
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+/* ---------- Ticket count chip (inside customer table) ---------- */
+/*
+   Small pill showing how many tickets a customer has.
+   Zero tickets gets a muted appearance.
+*/
+.ticket-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--open-bg);
+  color: var(--open);
+  transition: background 0.15s;
+}
+.ticket-chip.is-zero {
+  background: var(--line);
+  color: var(--text-muted);
+}
+
+/* ---------- Required field asterisk ---------- */
+/*
+   Placed inside <label> elements next to "required" fields.
+   Screen readers skip the visual asterisk; aria-required
+   on the input provides the accessible signal.
+*/
+.req {
+  color: var(--danger);
+  margin-left: 2px;
+  font-size: 13px;
+  line-height: 1;
+  vertical-align: middle;
+  /* not bold — just the accent colour is enough */
+  font-weight: 400;
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 860px) {
   .app { grid-template-columns: 1fr; }
@@ -495,8 +652,19 @@ table.data tbody tr:hover { background: var(--paper); }
   .sidebar__foot { display: none; }
   .main { padding: 20px 16px 48px; }
   .form-grid-2 { grid-template-columns: 1fr; }
+
+  /* Detail grid: stack to single column on mobile */
+  .detail-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .detail-row--full { grid-template-columns: 1fr; }
+
+  /* Wide modal: collapse to standard width */
+  .modal--wide { max-width: 440px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
 }
+
