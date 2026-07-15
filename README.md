@@ -1,7 +1,3 @@
-Based on your project (Project Idea 3: Support Ticket Management System) and your role as Backend/API + Database Engineer, here is a complete and professional `README.md` file for your GitHub branch.
-
----
-
 # 🎫 Support Ticket Management System
 
 > A lightweight helpdesk application for creating, tracking, and managing support tickets with priority and status tracking.
