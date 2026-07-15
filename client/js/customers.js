@@ -6,50 +6,51 @@
 // ── State ────────────────────────────────────────────────────────────────────
 
 const state = {
-  allCustomers: [],     // master list fetched from API
-  ticketCounts: {},     // { customerId: count }
-  keyword:    '',
-  editingId:  null,     // null = create mode, number = edit mode
-  viewingId:  null,
+  allCustomers: [],   // master list fetched from API
+  ticketCounts: {},   // { customerId: count }
+  keyword:   '',
+  editingId: null,    // null = create mode, number = edit mode
+  viewingId: null,
 };
 
 // ── DOM refs ─────────────────────────────────────────────────────────────────
 
-const tbody        = document.getElementById('customersBody');
-const countEl      = document.getElementById('customerCount');
-const searchInput  = document.getElementById('customerSearch');
-const btnClear     = document.getElementById('btnClearCustomerSearch');
-const btnNew       = document.getElementById('btnNewCustomer');
+const tbody       = document.getElementById('customersBody');
+const countEl     = document.getElementById('customerCount');
+const searchInput = document.getElementById('customerSearch');
+const btnClear    = document.getElementById('btnClearCustomerSearch');
+const btnNew      = document.getElementById('btnNewCustomer');
 
 // Customer modal
-const custOverlay  = document.getElementById('customerModalOverlay');
-const custTitle    = document.getElementById('customerModalTitle');
-const custSaveBtn  = document.getElementById('customerModalSave');
-const fldName      = document.getElementById('custName');
-const fldEmail     = document.getElementById('custEmail');
-const fldPhone     = document.getElementById('custPhone');
-const rowName      = document.getElementById('rowCustName');
-const rowEmail     = document.getElementById('rowCustEmail');
-const errName      = document.getElementById('errCustName');
-const errEmail     = document.getElementById('errCustEmail');
+const custOverlay = document.getElementById('customerModalOverlay');
+const custTitle   = document.getElementById('customerModalTitle');
+const custSaveBtn = document.getElementById('customerModalSave');
+const fldName     = document.getElementById('custName');
+const fldEmail    = document.getElementById('custEmail');
+const fldPhone    = document.getElementById('custPhone');
+const fldCompany  = document.getElementById('custCompany');
+const rowName     = document.getElementById('rowCustName');
+const rowEmail    = document.getElementById('rowCustEmail');
+const errName     = document.getElementById('errCustName');
+const errEmail    = document.getElementById('errCustEmail');
 
 // View modal
-const viewOverlay  = document.getElementById('viewCustOverlay');
-const viewTitle    = document.getElementById('viewCustTitle');
-const viewBody     = document.getElementById('viewCustBody');
-const viewEditBtn  = document.getElementById('viewCustEdit');
+const viewOverlay = document.getElementById('viewCustOverlay');
+const viewTitle   = document.getElementById('viewCustTitle');
+const viewBody    = document.getElementById('viewCustBody');
+const viewEditBtn = document.getElementById('viewCustEdit');
 
 // ── Load & render ─────────────────────────────────────────────────────────────
 
 async function loadCustomers() {
-  tbody.innerHTML = `<tr><td colspan="6"><div class="state">Loading…</div></td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="7"><div class="state">Loading…</div></td></tr>`;
   countEl.textContent = '';
 
   try {
     // Fetch customers and all tickets in parallel — count tickets client-side
     const [customers, tickets] = await Promise.all([
       api.getCustomers(),
-      api.getTickets().catch(() => []),   // graceful fallback if tickets fail
+      api.getTickets().catch(() => []),
     ]);
 
     // Build ticket count map { customerId → count }
@@ -61,7 +62,7 @@ async function loadCustomers() {
     state.allCustomers = customers;
     renderFiltered();
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="6"><div class="state"><h3>Could not load customers</h3><p>${escapeHtml(err.message)}</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7"><div class="state"><h3>Could not load customers</h3><p>${escapeHtml(err.message)}</p></div></td></tr>`;
   }
 }
 
@@ -71,7 +72,8 @@ function renderFiltered() {
     ? state.allCustomers.filter(
         (c) =>
           c.name.toLowerCase().includes(kw) ||
-          c.email.toLowerCase().includes(kw)
+          c.email.toLowerCase().includes(kw) ||
+          (c.company || '').toLowerCase().includes(kw)
       )
     : state.allCustomers;
 
@@ -82,8 +84,8 @@ function renderTable(customers) {
   if (!customers || customers.length === 0) {
     const msg = state.keyword
       ? 'No customers match your search.'
-      : 'No customers yet. Add your first customer to get started.';
-    tbody.innerHTML = `<tr><td colspan="6"><div class="state"><h3>No customers found</h3><p>${escapeHtml(msg)}</p></div></td></tr>`;
+      : 'No customers yet. Click "Add Customer" to get started.';
+    tbody.innerHTML = `<tr><td colspan="7"><div class="state"><h3>No customers found</h3><p>${escapeHtml(msg)}</p></div></td></tr>`;
     countEl.textContent = '';
     return;
   }
@@ -103,6 +105,7 @@ function renderTable(customers) {
         </td>
         <td>${escapeHtml(c.email)}</td>
         <td>${escapeHtml(c.phone || '—')}</td>
+        <td>${escapeHtml(c.company || '—')}</td>
         <td><span class="${chipClass}" title="${count} ticket${count !== 1 ? 's' : ''}">${count}</span></td>
         <td>
           <div class="cell-actions">
@@ -168,13 +171,14 @@ function validateForm() {
 // ── Customer modal helpers ────────────────────────────────────────────────────
 
 function openCreateModal() {
-  state.editingId = null;
+  state.editingId          = null;
   custTitle.textContent    = 'Add Customer';
   custSaveBtn.textContent  = 'Add Customer';
   clearValidation();
-  fldName.value  = '';
-  fldEmail.value = '';
-  fldPhone.value = '';
+  fldName.value    = '';
+  fldEmail.value   = '';
+  fldPhone.value   = '';
+  fldCompany.value = '';
   custOverlay.classList.add('is-open');
   fldName.focus();
 }
@@ -186,14 +190,15 @@ function openEditModal(id) {
     return;
   }
 
-  state.editingId = id;
+  state.editingId          = id;
   custTitle.textContent    = `Edit Customer #${id}`;
   custSaveBtn.textContent  = 'Save Changes';
   clearValidation();
 
-  fldName.value  = customer.name;
-  fldEmail.value = customer.email;
-  fldPhone.value = customer.phone || '';
+  fldName.value    = customer.name;
+  fldEmail.value   = customer.email;
+  fldPhone.value   = customer.phone    || '';
+  fldCompany.value = customer.company  || '';
 
   custOverlay.classList.add('is-open');
   fldName.focus();
@@ -210,9 +215,10 @@ async function saveCustomer() {
   if (!validateForm()) return;
 
   const data = {
-    name:  fldName.value.trim(),
-    email: fldEmail.value.trim().toLowerCase(),
-    phone: fldPhone.value.trim() || null,
+    name:    fldName.value.trim(),
+    email:   fldEmail.value.trim().toLowerCase(),
+    phone:   fldPhone.value.trim()   || null,
+    company: fldCompany.value.trim() || null,
   };
 
   custSaveBtn.disabled    = true;
@@ -227,9 +233,8 @@ async function saveCustomer() {
       showToast('Customer added successfully.', 'success');
     }
     closeCustomerModal();
-    loadCustomers();   // reload to get fresh data + ticket counts
+    loadCustomers();
   } catch (err) {
-    // Duplicate email returns 409 from our improved backend
     if (err.message && err.message.toLowerCase().includes('already exists')) {
       rowEmail.classList.add('has-error');
       errEmail.textContent = err.message;
@@ -247,10 +252,9 @@ async function saveCustomer() {
 async function deleteCustomer(id, name, ticketCount) {
   let message = `Delete customer "${name}" (ID #${id})?`;
   if (ticketCount > 0) {
-    message += `\n\n⚠️ Warning: This customer has ${ticketCount} ticket${ticketCount !== 1 ? 's' : ''}. All their tickets will also be permanently deleted.`;
+    message += `\n\n⚠️ Warning: This customer has ${ticketCount} open ticket${ticketCount !== 1 ? 's' : ''}. All associated tickets will also be permanently deleted.`;
   }
   message += '\n\nThis action cannot be undone.';
-
   if (!window.confirm(message)) return;
 
   try {
@@ -290,6 +294,10 @@ function openViewModal(id) {
         <span class="detail-value">${escapeHtml(customer.phone || '—')}</span>
       </div>
       <div class="detail-row">
+        <span class="detail-label">Company</span>
+        <span class="detail-value">${escapeHtml(customer.company || '—')}</span>
+      </div>
+      <div class="detail-row">
         <span class="detail-label">Tickets</span>
         <span class="detail-value">
           <span class="${count === 0 ? 'ticket-chip is-zero' : 'ticket-chip'}">${count}</span>
@@ -309,44 +317,36 @@ function closeViewModal() {
 
 // ── Event wiring ──────────────────────────────────────────────────────────────
 
-// New customer button
 btnNew.addEventListener('click', openCreateModal);
 
-// Customer modal close
 document.getElementById('customerModalClose').addEventListener('click',  closeCustomerModal);
 document.getElementById('customerModalCancel').addEventListener('click', closeCustomerModal);
 custOverlay.addEventListener('click', (e) => { if (e.target === custOverlay) closeCustomerModal(); });
 
-// Save button
 custSaveBtn.addEventListener('click', saveCustomer);
 
-// Allow Enter key to submit the form
-[fldName, fldEmail, fldPhone].forEach((input) => {
+[fldName, fldEmail, fldPhone, fldCompany].forEach((input) => {
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') saveCustomer();
   });
 });
 
-// View modal close
 document.getElementById('viewCustClose').addEventListener('click',  closeViewModal);
 document.getElementById('viewCustClose2').addEventListener('click', closeViewModal);
 viewOverlay.addEventListener('click', (e) => { if (e.target === viewOverlay) closeViewModal(); });
 
-// View modal → open edit
 viewEditBtn.addEventListener('click', () => {
   const id = state.viewingId;
   closeViewModal();
   openEditModal(id);
 });
 
-// Table event delegation (view, edit, delete)
 tbody.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-action]');
   if (!btn) return;
-
   const id          = parseInt(btn.dataset.id, 10);
   const action      = btn.dataset.action;
-  const name        = btn.dataset.name  || '';
+  const name        = btn.dataset.name    || '';
   const ticketCount = parseInt(btn.dataset.tickets || '0', 10);
 
   if (action === 'view')   openViewModal(id);
@@ -354,7 +354,6 @@ tbody.addEventListener('click', (e) => {
   if (action === 'delete') deleteCustomer(id, name, ticketCount);
 });
 
-// Keyboard accessibility — Escape closes whichever modal is open
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if (custOverlay.classList.contains('is-open')) closeCustomerModal();

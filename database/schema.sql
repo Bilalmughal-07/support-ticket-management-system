@@ -3,11 +3,19 @@ PRAGMA foreign_keys = ON;
 
 -- Customers table
 CREATE TABLE IF NOT EXISTS customers (
-    id    INTEGER PRIMARY KEY AUTOINCREMENT,
-    name  TEXT NOT NULL,
-    email TEXT NOT NULL UNIQUE,
-    phone TEXT
+    id      INTEGER PRIMARY KEY AUTOINCREMENT,
+    name    TEXT NOT NULL,
+    email   TEXT NOT NULL UNIQUE,
+    phone   TEXT,
+    company TEXT
 );
+
+-- Non-destructive migration: add 'company' column to existing databases.
+-- SQLite does not support IF NOT EXISTS on ALTER TABLE, so we use a
+-- CREATE TABLE trick: attempt the ALTER and silently ignore the error
+-- if the column already exists (handled in database.js via db.exec).
+-- The line below is run as a separate statement so schema.sql stays valid.
+ALTER TABLE customers ADD COLUMN company TEXT;
 
 -- Tickets table
 -- Priority: Low | Medium | High | Critical

@@ -52,7 +52,7 @@
       <div class="toolbar">
         <div class="search-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
-          <input id="customerSearch" type="search" class="input" placeholder="Search by name or email…" autocomplete="off">
+          <input id="customerSearch" type="search" class="input" placeholder="Search by name, email or company…" autocomplete="off">
         </div>
         <button id="btnClearCustomerSearch" class="btn btn--ghost btn--sm">Clear</button>
       </div>
@@ -67,12 +67,13 @@
               <th>Name</th>
               <th>Email</th>
               <th>Phone</th>
+              <th>Company</th>
               <th>Tickets</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody id="customersBody">
-            <tr><td colspan="6"><div class="state">Loading customers…</div></td></tr>
+            <tr><td colspan="7"><div class="state">Loading customers…</div></td></tr>
           </tbody>
         </table>
       </div>
@@ -89,18 +90,24 @@
     </div>
     <div class="modal__body">
       <div class="form-row" id="rowCustName">
-        <label for="custName">Name <span class="req">*</span></label>
-        <input id="custName" type="text" class="input" placeholder="Full name" maxlength="120">
+        <label for="custName">Full Name <span class="req">*</span></label>
+        <input id="custName" type="text" class="input" placeholder="e.g. Jane Smith" maxlength="120" aria-required="true">
         <span class="error-text" id="errCustName">Name is required.</span>
       </div>
       <div class="form-row" id="rowCustEmail">
-        <label for="custEmail">Email <span class="req">*</span></label>
-        <input id="custEmail" type="email" class="input" placeholder="email@example.com">
+        <label for="custEmail">Email Address <span class="req">*</span></label>
+        <input id="custEmail" type="email" class="input" placeholder="email@example.com" aria-required="true">
         <span class="error-text" id="errCustEmail">A valid email address is required.</span>
       </div>
-      <div class="form-row">
-        <label for="custPhone">Phone</label>
-        <input id="custPhone" type="tel" class="input" placeholder="Optional phone number">
+      <div class="form-grid-2">
+        <div class="form-row">
+          <label for="custPhone">Phone</label>
+          <input id="custPhone" type="tel" class="input" placeholder="Optional">
+        </div>
+        <div class="form-row">
+          <label for="custCompany">Company</label>
+          <input id="custCompany" type="text" class="input" placeholder="Optional" maxlength="120">
+        </div>
       </div>
     </div>
     <div class="modal__foot">

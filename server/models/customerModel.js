@@ -2,7 +2,7 @@ const db = require('../config/database');
 
 // Get all customers
 const getAllCustomers = (callback) => {
-    db.all('SELECT * FROM customers ORDER BY id', callback);
+    db.all('SELECT * FROM customers ORDER BY name', callback);
 };
 
 // Get customer by ID
@@ -11,22 +11,22 @@ const getCustomerById = (id, callback) => {
 };
 
 // Create new customer
-const createCustomer = (name, email, phone, callback) => {
+const createCustomer = (name, email, phone, company, callback) => {
     db.run(
-        'INSERT INTO customers (name, email, phone) VALUES (?, ?, ?)',
-        [name, email, phone],
-        function(err) {
+        'INSERT INTO customers (name, email, phone, company) VALUES (?, ?, ?, ?)',
+        [name, email, phone, company],
+        function (err) {
             callback(err, this?.lastID);
         }
     );
 };
 
 // Update customer
-const updateCustomer = (id, name, email, phone, callback) => {
+const updateCustomer = (id, name, email, phone, company, callback) => {
     db.run(
-        'UPDATE customers SET name = ?, email = ?, phone = ? WHERE id = ?',
-        [name, email, phone, id],
-        function(err) {
+        'UPDATE customers SET name = ?, email = ?, phone = ?, company = ? WHERE id = ?',
+        [name, email, phone, company, id],
+        function (err) {
             callback(err, this?.changes);
         }
     );
@@ -34,7 +34,7 @@ const updateCustomer = (id, name, email, phone, callback) => {
 
 // Delete customer
 const deleteCustomer = (id, callback) => {
-    db.run('DELETE FROM customers WHERE id = ?', [id], function(err) {
+    db.run('DELETE FROM customers WHERE id = ?', [id], function (err) {
         callback(err, this?.changes);
     });
 };
@@ -44,5 +44,5 @@ module.exports = {
     getCustomerById,
     createCustomer,
     updateCustomer,
-    deleteCustomer
+    deleteCustomer,
 };

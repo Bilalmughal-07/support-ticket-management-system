@@ -25,45 +25,57 @@ const getCustomer = (req, res) => {
 
 // Create new customer
 const createCustomer = (req, res) => {
-    const { name, email, phone } = req.body;
+    const { name, email, phone, company } = req.body;
     if (!name || !email) {
         return res.status(400).json({ error: 'name and email are required' });
     }
     if (!isValidEmail(email)) {
         return res.status(400).json({ error: 'A valid email address is required' });
     }
-    Customer.createCustomer(name, email.toLowerCase(), phone || null, (err, id) => {
-        if (err) {
-            // UNIQUE constraint violation → 409 Conflict
-            if (err.message && err.message.includes('UNIQUE constraint failed')) {
-                return res.status(409).json({ error: 'A customer with this email already exists' });
+    Customer.createCustomer(
+        name.trim(),
+        email.trim().toLowerCase(),
+        phone ? phone.trim() : null,
+        company ? company.trim() : null,
+        (err, id) => {
+            if (err) {
+                if (err.message && err.message.includes('UNIQUE constraint failed')) {
+                    return res.status(409).json({ error: 'A customer with this email already exists' });
+                }
+                return res.status(500).json({ error: err.message });
             }
-            return res.status(500).json({ error: err.message });
+            res.status(201).json({ id, message: 'Customer created' });
         }
-        res.status(201).json({ id, message: 'Customer created' });
-    });
+    );
 };
 
 // Update customer
 const updateCustomer = (req, res) => {
     const id = req.params.id;
-    const { name, email, phone } = req.body;
+    const { name, email, phone, company } = req.body;
     if (!name || !email) {
         return res.status(400).json({ error: 'name and email are required' });
     }
     if (!isValidEmail(email)) {
         return res.status(400).json({ error: 'A valid email address is required' });
     }
-    Customer.updateCustomer(id, name, email.toLowerCase(), phone || null, (err, changes) => {
-        if (err) {
-            if (err.message && err.message.includes('UNIQUE constraint failed')) {
-                return res.status(409).json({ error: 'A customer with this email already exists' });
+    Customer.updateCustomer(
+        id,
+        name.trim(),
+        email.trim().toLowerCase(),
+        phone ? phone.trim() : null,
+        company ? company.trim() : null,
+        (err, changes) => {
+            if (err) {
+                if (err.message && err.message.includes('UNIQUE constraint failed')) {
+                    return res.status(409).json({ error: 'A customer with this email already exists' });
+                }
+                return res.status(500).json({ error: err.message });
             }
-            return res.status(500).json({ error: err.message });
+            if (changes === 0) return res.status(404).json({ error: 'Customer not found' });
+            res.json({ message: 'Customer updated' });
         }
-        if (changes === 0) return res.status(404).json({ error: 'Customer not found' });
-        res.json({ message: 'Customer updated' });
-    });
+    );
 };
 
 // Delete customer
@@ -81,5 +93,5 @@ module.exports = {
     getCustomer,
     createCustomer,
     updateCustomer,
-    deleteCustomer
+    deleteCustomer,
 };

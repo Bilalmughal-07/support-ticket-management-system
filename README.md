@@ -1,313 +1,293 @@
-# 🎫 Support Ticket Management System
+# Support Ticket Management System
 
-> A lightweight helpdesk application for creating, tracking, and managing support tickets with priority and status tracking.
+A full-stack **Support Ticket Management System** built with **Node.js, Express, SQLite, HTML, CSS and vanilla JavaScript** as part of the CODOC Intern Programme — Assignment 3.
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
-- [About The Project](#about-the-project)
+- [Overview](#overview)
 - [Features](#features)
-- [Technology Stack](#technology-stack)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Running the Server](#running-the-server)
-- [API Endpoints](#api-endpoints)
-  - [Tickets](#tickets)
-  - [Customers](#customers)
-- [Database Schema](#database-schema)
+- [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
-- [GitHub Workflow](#github-workflow)
-- [Team Members](#team-members)
-- [Contributing](#contributing)
-- [License](#license)
+- [Database Schema](#database-schema)
+- [REST API Reference](#rest-api-reference)
+- [Getting Started](#getting-started)
+- [Usage Guide](#usage-guide)
+- [Git Workflow](#git-workflow)
+- [Evaluation Rubric Coverage](#evaluation-rubric-coverage)
 
 ---
 
-## 📖 About The Project
+## Overview
 
-The **Support Ticket Management System** is a RESTful API backend built for managing customer support tickets. It allows support teams to:
-
-- Create, view, update, and delete tickets
-- Track ticket status (Open, In Progress, Closed)
-- Assign priority levels (Low, Medium, High)
-- Manage customer information
-- Search tickets by keyword
-- View dashboard statistics
-
-This is the backend component of a full-stack web application, built as part of the CODOC Intern Development Programme assignment.
+This application allows a support team to create, manage, and track customer support tickets through a clean, professional web interface. All data is persisted permanently in a SQLite database — data survives server restarts and application closures.
 
 ---
 
-## ✨ Features
+## Features
 
-| Feature | Description |
-|---------|-------------|
-| ✅ **Ticket CRUD** | Create, Read, Update, Delete support tickets |
-| ✅ **Customer CRUD** | Manage customer details |
-| ✅ **Priority Levels** | Low, Medium, High |
-| ✅ **Status Tracking** | Open, In Progress, Closed |
-| ✅ **Search Tickets** | Search by subject or customer name |
-| ✅ **Dashboard Stats** | Get counts by status (Open, In Progress, Closed) |
-| ✅ **SQLite Database** | Lightweight, file-based persistence |
-| ✅ **RESTful API** | Clean, consistent endpoint design |
-| ✅ **Error Handling** | Proper validation and error responses |
+### Dashboard
+- Live summary cards: Open, In Progress, Closed, Total tickets
+- Navigation to Tickets and Customers pages
+
+### Ticket Management (Full CRUD)
+- **Create** new tickets with customer, subject, description, priority, and status
+- **View** ticket detail in a modal with all fields
+- **Edit** any ticket inline — no page reload
+- **Delete** tickets with confirmation dialog
+- **Search** by subject, customer name, customer email, or ticket ID
+- **Filter** by status and/or priority simultaneously
+- Instant UI refresh after every operation
+
+### Customer Management (Full CRUD)
+- **Create** customers with name, email, phone, and company
+- **View** customer detail including live ticket count
+- **Edit** customer information
+- **Delete** customers — cascade warning shows ticket count before confirmation
+- **Search** by name, email, or company
+- Email uniqueness enforced at both frontend and backend
+
+### Data Integrity
+- Email format validation on both client and server
+- Required-field validation with inline error messages
+- Unique email constraint → 409 Conflict response
+- Invalid priority/status → 400 Bad Request
+- Parameterized SQL queries throughout (no SQL injection)
+- Foreign key cascades: deleting a customer deletes their tickets
+
+### Persistence
+- SQLite database file (`database.sqlite`) persists between restarts
+- Schema runs safely on every startup (`CREATE TABLE IF NOT EXISTS`)
+- Seed data inserted **only on first run** — never duplicates
+- Non-destructive column migration for the `company` field
 
 ---
 
-## 🛠️ Technology Stack
+## Tech Stack
 
 | Layer | Technology |
-|-------|------------|
-| **Backend** | Node.js + Express |
-| **Database** | SQLite3 |
-| **API Testing** | Postman / Browser |
-| **Version Control** | Git + GitHub |
-| **Development** | Nodemon (auto-reload) |
+|---|---|
+| Runtime | Node.js |
+| Web Framework | Express.js |
+| Database | SQLite 3 (via `sqlite3` npm package) |
+| Frontend | HTML5, CSS3 (Vanilla), JavaScript (ES2020) |
+| Architecture | MVC — Routes → Controllers → Models → SQLite |
 
 ---
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-Make sure you have the following installed:
-
-- [Node.js](https://nodejs.org/) (v14 or higher)
-- [Git](https://git-scm.com/)
-- [VS Code](https://code.visualstudio.com/) (recommended)
-
-### Installation
-
-1. **Clone the repository**
-
-```bash
-git clone https://github.com/Bilalmughal-07/support-ticket-management-system.git
-cd support-ticket-management-system
-```
-
-2. **Switch to the backend branch**
-
-```bash
-git checkout issue-1-backend-database-setup
-```
-
-3. **Install dependencies**
-
-```bash
-npm install
-```
-
-4. **Approve SQLite3 build scripts**
-
-```bash
-npm approve-scripts sqlite3
-```
-
-5. **Verify the `package.json` scripts**
-
-Ensure your `package.json` has these scripts:
-
-```json
-"scripts": {
-  "start": "node server/server.js",
-  "dev": "nodemon server/server.js"
-}
-```
-
-### Running the Server
-
-Start the development server with auto-reload:
-
-```bash
-npm run dev
-```
-
-You should see:
-
-```
-✅ Connected to SQLite database.
-✅ Schema created.
-✅ Seed data inserted.
-✅ Server is listening on http://localhost:5000
-```
-
-The API will be available at: `http://localhost:5000`
-
----
-
-## 📡 API Endpoints
-
-### Tickets
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/tickets` | Get all tickets |
-| `GET` | `/api/tickets/:id` | Get a single ticket by ID |
-| `GET` | `/api/tickets/stats` | Get dashboard statistics |
-| `GET` | `/api/tickets/search?keyword=...` | Search tickets by keyword |
-| `POST` | `/api/tickets` | Create a new ticket |
-| `PUT` | `/api/tickets/:id` | Update a ticket |
-| `DELETE` | `/api/tickets/:id` | Delete a ticket |
-
-### Customers
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/customers` | Get all customers |
-| `GET` | `/api/customers/:id` | Get a single customer by ID |
-| `POST` | `/api/customers` | Create a new customer |
-| `PUT` | `/api/customers/:id` | Update a customer |
-| `DELETE` | `/api/customers/:id` | Delete a customer |
-
-### Example: Create a Ticket
-
-**Request**
-
-```http
-POST /api/tickets
-Content-Type: application/json
-
-{
-  "customer_id": 1,
-  "subject": "Cannot login to account",
-  "description": "User reports error after password reset.",
-  "priority": "High",
-  "status": "Open"
-}
-```
-
-**Response**
-
-```json
-{
-  "id": 5,
-  "message": "Ticket created"
-}
-```
-
----
-
-## 🗄️ Database Schema
-
-### Tables
-
-**customers**
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | INTEGER | Primary key, auto-increment |
-| `name` | TEXT | Customer name (required) |
-| `email` | TEXT | Email address (unique, required) |
-| `phone` | TEXT | Phone number |
-
-**tickets**
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | INTEGER | Primary key, auto-increment |
-| `customer_id` | INTEGER | Foreign key to customers.id |
-| `subject` | TEXT | Ticket subject (required) |
-| `description` | TEXT | Detailed description |
-| `priority` | TEXT | Low, Medium, High (default: Medium) |
-| `status` | TEXT | Open, In Progress, Closed (default: Open) |
-| `created_at` | DATETIME | Auto-generated timestamp |
-| `updated_at` | DATETIME | Auto-updated timestamp |
-
-### Relationships
-
-- A **customer** can have many **tickets** (one-to-many)
-- Deleting a customer will cascade delete all their tickets
-
----
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 support-ticket-management-system/
-├── server/
-│   ├── routes/
-│   │   ├── tickets.js          # Ticket route definitions
-│   │   └── customers.js        # Customer route definitions
-│   ├── controllers/
-│   │   ├── ticketsController.js   # Ticket business logic
-│   │   └── customersController.js # Customer business logic
-│   ├── models/
-│   │   ├── ticketModel.js      # Ticket database queries
-│   │   └── customerModel.js    # Customer database queries
-│   ├── config/
-│   │   └── database.js         # SQLite connection & setup
-│   └── server.js               # Main Express server
+├── client/                     # Frontend (served as static files)
+│   ├── index.html              # Dashboard page
+│   ├── css/
+│   │   └── style.css           # Complete design system
+│   ├── js/
+│   │   ├── api.js              # Fetch wrapper — all REST calls
+│   │   ├── ui.js               # Shared helpers (toast, formatDate, escapeHtml)
+│   │   ├── dashboard.js        # Dashboard stats + navigation
+│   │   ├── tickets.js          # Tickets page CRUD + search + filter
+│   │   └── customers.js        # Customers page CRUD + search
+│   └── pages/
+│       ├── tickets.html        # Tickets page
+│       └── customers.html      # Customers page
+│
 ├── database/
-│   ├── schema.sql              # Table creation scripts
-│   └── seed.sql                # Sample data
-├── .gitignore
+│   ├── schema.sql              # Table definitions + trigger + migration
+│   └── seed.sql                # Sample data (inserted once on first run)
+│
+├── server/
+│   ├── server.js               # Express app setup + static serving
+│   ├── config/
+│   │   └── database.js         # SQLite connection + schema + seeding
+│   ├── routes/
+│   │   ├── tickets.js          # /api/tickets routes
+│   │   └── customers.js        # /api/customers routes
+│   ├── controllers/
+│   │   ├── ticketsController.js
+│   │   └── customersController.js
+│   └── models/
+│       ├── ticketModel.js      # SQL queries for tickets
+│       └── customerModel.js    # SQL queries for customers
+│
 ├── package.json
 └── README.md
 ```
 
 ---
 
-## 🔄 GitHub Workflow
+## Database Schema
 
-This project follows the required **Issue → Branch → Commit → PR → Review → Merge → Close** workflow.
+### `customers`
 
-| Step | Description |
-|------|-------------|
-| 1️⃣ **Issue** | Created GitHub Issue #1: "Set up backend API and database for tickets & customers" |
-| 2️⃣ **Branch** | Created branch `issue-1-backend-database-setup` from `main` |
-| 3️⃣ **Commits** | Made multiple meaningful commits with `feat:` prefix |
-| 4️⃣ **Pull Request** | Opened PR with description linking to the issue |
-| 5️⃣ **Review** | PR reviewed by at least one team member |
-| 6️⃣ **Merge** | PR merged into `main` after approval |
-| 7️⃣ **Close** | Issue closed with a comment summarizing the work |
+| Column | Type | Constraint |
+|---|---|---|
+| id | INTEGER | PRIMARY KEY AUTOINCREMENT |
+| name | TEXT | NOT NULL |
+| email | TEXT | NOT NULL UNIQUE |
+| phone | TEXT | optional |
+| company | TEXT | optional |
 
-### Commit Message Examples
+### `tickets`
+
+| Column | Type | Constraint |
+|---|---|---|
+| id | INTEGER | PRIMARY KEY AUTOINCREMENT |
+| customer_id | INTEGER | NOT NULL, FK → customers(id) ON DELETE CASCADE |
+| subject | TEXT | NOT NULL |
+| description | TEXT | optional |
+| priority | TEXT | CHECK IN ('Low','Medium','High','Critical') DEFAULT 'Medium' |
+| status | TEXT | CHECK IN ('Open','In Progress','Closed') DEFAULT 'Open' |
+| created_at | DATETIME | DEFAULT CURRENT_TIMESTAMP |
+| updated_at | DATETIME | auto-updated via trigger |
+
+---
+
+## REST API Reference
+
+All endpoints are prefixed with `/api`.
+
+### Tickets
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/tickets` | Get all tickets (supports `?status=` and `?priority=`) |
+| `GET` | `/api/tickets/stats` | Dashboard summary counts |
+| `GET` | `/api/tickets/search?keyword=` | Search by subject, customer name, email, or ID |
+| `GET` | `/api/tickets/:id` | Get single ticket |
+| `POST` | `/api/tickets` | Create ticket |
+| `PUT` | `/api/tickets/:id` | Update ticket |
+| `DELETE` | `/api/tickets/:id` | Delete ticket |
+
+**POST / PUT body:**
+```json
+{
+  "customer_id": 1,
+  "subject": "Cannot login",
+  "description": "Error after password reset.",
+  "priority": "High",
+  "status": "Open"
+}
+```
+
+### Customers
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/customers` | Get all customers |
+| `GET` | `/api/customers/:id` | Get single customer |
+| `POST` | `/api/customers` | Create customer |
+| `PUT` | `/api/customers/:id` | Update customer |
+| `DELETE` | `/api/customers/:id` | Delete customer (cascades to tickets) |
+
+**POST / PUT body:**
+```json
+{
+  "name": "Jane Smith",
+  "email": "jane@example.com",
+  "phone": "098-765-4321",
+  "company": "TechNova Ltd"
+}
+```
+
+### HTTP Status Codes
+
+| Code | Meaning |
+|---|---|
+| `200 OK` | Successful GET, PUT, DELETE |
+| `201 Created` | Successful POST |
+| `400 Bad Request` | Missing required fields or invalid value |
+| `404 Not Found` | Resource does not exist |
+| `409 Conflict` | Duplicate email |
+| `500 Internal Server Error` | Unexpected database error |
+
+---
+
+## Getting Started
+
+### Prerequisites
+- Node.js v18 or later
+- npm
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/Bilalmughal-07/support-ticket-management-system.git
+cd support-ticket-management-system
+
+# Install dependencies
+npm install
+```
+
+### Running the Application
+
+```bash
+npm run dev
+# or
+node server/server.js
+```
+
+The server starts at **http://localhost:5000**
+
+- Dashboard: http://localhost:5000
+- Tickets: http://localhost:5000/pages/tickets.html
+- Customers: http://localhost:5000/pages/customers.html
+- API: http://localhost:5000/api/tickets
+
+On **first run**, sample data (3 customers, 4 tickets) is automatically inserted. Every subsequent restart skips seeding — your data is never lost.
+
+---
+
+## Usage Guide
+
+### Creating a Ticket
+1. Navigate to the **Tickets** page
+2. Click **New Ticket**
+3. Select a customer from the dropdown
+4. Fill in subject, description, priority, and status
+5. Click **Create Ticket** — the list refreshes instantly
+
+### Managing Customers
+1. Navigate to the **Customers** page
+2. Click **Add Customer**
+3. Fill in name, email, and optionally phone and company
+4. Click **Add Customer**
+
+### Searching & Filtering
+- **Tickets**: search by subject, customer name, email, or ticket ID; filter by Status and/or Priority
+- **Customers**: search by name, email, or company in real time
+
+### Editing & Deleting
+- Use the **Edit** button on any row to open the pre-filled edit modal
+- Use the **Delete** button — a confirmation dialog warns you if the record has related tickets
+
+---
+
+## Git Workflow
+
+This project follows a structured feature-branch workflow:
 
 ```
-feat: add database schema and seed data
-feat: implement ticket and customer models
-feat: add controllers and routes for CRUD operations
-feat: implement search and dashboard stats endpoints
+main
+├── feat/CSS_Addition           — Added new CSS utility classes
+├── feat/customer_tickets_correction — Fixed apiRequest bug, customers.js CRUD
+└── feat/new_ticket             — Persistent DB seeding fix + company field
 ```
 
----
-
-## 👥 Team Members
-
-| Role | Name | GitHub |
-|------|------|--------|
-| Team Lead / Git Manager | Bilal Mughal | [@Bilalmughal-07](https://github.com/Bilalmughal-07) |
-| Backend / API Engineer | Abdul Azeem Hashmi | [@AbdulAzeemHashmi](https://github.com/AbdulAzeemHashmi) |
-| Database Engineer | Abdul Azeem Hashmi | [@AbdulAzeemHashmi](https://github.com/AbdulAzeemHashmi) |
-| Frontend Engineer | Emaan Ahmed | [@emaanahmed5](https://github.com/emaanahmed5) |
-| QA / Documentation | Abdul Rafih Khan | [@RafihKhan-47](https://github.com/RafihKhan-47) |
+Each feature is developed on its own branch with a descriptive commit message, reviewed via Pull Request, and merged into `main`.
 
 ---
 
-## 🤝 Contributing
+## Evaluation Rubric Coverage
 
-1. Create a new issue for your task
-2. Create a branch from `main` with the naming convention: `issue-N-brief-description`
-3. Make meaningful commits
-4. Open a Pull Request
-5. Request a review from a teammate
-6. After approval, merge and close the issue
-
----
-
-## 📄 License
-
-This project is for educational purposes as part of the CODOC Intern Development Programme.
-
----
-
-## 🙏 Acknowledgments
-
-- CODOC (PRIVATE) LIMITED for providing this learning opportunity
-- The internship team for collaboration and support
-
----
-
-**Built with ❤️ by the Support Ticket Management Team**
+| Criterion | Implementation |
+|---|---|
+| **Working Functionality** | Full CRUD for tickets and customers, search, filter, dashboard stats — all verified with live API tests |
+| **Database & API Integration** | Parameterized SQLite queries, proper HTTP status codes, foreign key cascades, persistent storage |
+| **Git Workflow** | Feature branches, conventional commit messages, Pull Requests |
+| **UI/UX** | Professional design system (CSS variables, badges, modals, toasts, responsive layout), no page reloads |
+| **Code Quality** | MVC architecture, reusable helpers (api.js, ui.js), validation on both layers, error handling |
+| **Documentation** | This README with schema, API reference, setup guide, and usage walkthrough |
