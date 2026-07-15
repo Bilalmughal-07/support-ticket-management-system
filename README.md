@@ -281,8 +281,8 @@ feat: implement search and dashboard stats endpoints
 | Team Lead / Git Manager | Bilal Mughal | [@Bilalmughal-07](https://github.com/Bilalmughal-07) |
 | Backend / API Engineer | Abdul Azeem Hashmi | [@AbdulAzeemHashmi](https://github.com/AbdulAzeemHashmi) |
 | Database Engineer | Abdul Azeem Hashmi | [@AbdulAzeemHashmi](https://github.com/AbdulAzeemHashmi) |
-| Frontend Engineer | (Team Member 3) | - |
-| QA / Documentation | (Team Member 4) | - |
+| Frontend Engineer | Emaan Ahmed | https://github.com/emaanahmed5 |
+| QA / Documentation | Abdul Rafih Khan | - |
 
 ---
 
