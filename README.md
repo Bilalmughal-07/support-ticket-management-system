@@ -234,7 +234,7 @@ All endpoints are prefixed with `/api`.
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| 🟢 `GET` | `/api/tickets` | Get all tickets (supports `?status=` and `?priority=`) |
+| 🟢 `GET` | `/api/tickets` | Get all tickets |
 | 🟢 `GET` | `/api/tickets/stats` | Dashboard summary counts |
 | 🟢 `GET` | `/api/tickets/search?keyword=` | Search by subject, customer name, email, or ID |
 | 🟢 `GET` | `/api/tickets/:id` | Get single ticket |
